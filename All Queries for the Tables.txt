@@ -1,0 +1,648 @@
+top_performers
+
+WITH combined_data AS (
+    SELECT 'Birla HS' AS school, `Student Roll`, `Student Name`,
+           (`Hindi` + `English` + `Mathematics` + `Physics` + `Chemistry` + `Biology` +
+            `History` + `Geography` + `Civics` + `Computer Science` + `Physical Education`) AS total_marks
+    FROM birla_2019
+    UNION ALL
+    SELECT 'Birla HS', `Student Roll`, `Student Name`,
+           (`Hindi` + `English` + `Mathematics` + `Physics` + `Chemistry` + `Biology` +
+            `History` + `Geography` + `Civics` + `Computer Science` + `Physical Education`)
+    FROM birla_2020
+    UNION ALL
+    SELECT 'Birla HS', `Student Roll`, `Student Name`,
+           (`Hindi` + `English` + `Mathematics` + `Physics` + `Chemistry` + `Biology` +
+            `History` + `Geography` + `Civics` + `Computer Science` + `Physical Education`)
+    FROM birla_2021
+    UNION ALL
+    SELECT 'DPS', `Student Roll`, `Student Name`,
+           (`Hindi` + `English` + `Mathematics` + `Physics` + `Chemistry` + `Biology` +
+            `History` + `Geography` + `Civics` + `Computer Science` + `Physical Education`)
+    FROM dps_2019
+    UNION ALL
+    SELECT 'DPS', `Student Roll`, `Student Name`,
+           (`Hindi` + `English` + `Mathematics` + `Physics` + `Chemistry` + `Biology` +
+            `History` + `Geography` + `Civics` + `Computer Science` + `Physical Education`)
+    FROM dps_2020
+    UNION ALL
+    SELECT 'DPS', `Student Roll`, `Student Name`,
+           (`Hindi` + `English` + `Mathematics` + `Physics` + `Chemistry` + `Biology` +
+            `History` + `Geography` + `Civics` + `Computer Science` + `Physical Education`)
+    FROM dps_2021
+    UNION ALL
+    SELECT 'International', `Student Roll`, `Student Name`,
+           (`Hindi` + `English` + `Mathematics` + `Physics` + `Chemistry` + `Biology` +
+            `History` + `Geography` + `Civics` + `Computer Science` + `Physical Education`)
+    FROM international_2019
+    UNION ALL
+    SELECT 'International', `Student Roll`, `Student Name`,
+           (`Hindi` + `English` + `Mathematics` + `Physics` + `Chemistry` + `Biology` +
+            `History` + `Geography` + `Civics` + `Computer Science` + `Physical Education`)
+    FROM international_2020
+    UNION ALL
+    SELECT 'International', `Student Roll`, `Student Name`,
+           (`Hindi` + `English` + `Mathematics` + `Physics` + `Chemistry` + `Biology` +
+            `History` + `Geography` + `Civics` + `Computer Science` + `Physical Education`)
+    FROM international_2021
+    UNION ALL
+    SELECT 'St. Joseph', `Student Roll`, `Student Name`,
+           (`Hindi` + `English` + `Mathematics` + `Physics` + `Chemistry` + `Biology` +
+            `History` + `Geography` + `Civics` + `Computer Science` + `Physical Education`)
+    FROM joseph_2019
+    UNION ALL
+    SELECT 'St. Joseph', `Student Roll`, `Student Name`,
+           (`Hindi` + `English` + `Mathematics` + `Physics` + `Chemistry` + `Biology` +
+            `History` + `Geography` + `Civics` + `Computer Science` + `Physical Education`)
+    FROM joseph_2020
+    UNION ALL
+    SELECT 'St. Joseph', `Student Roll`, `Student Name`,
+           (`Hindi` + `English` + `Mathematics` + `Physics` + `Chemistry` + `Biology` +
+            `History` + `Geography` + `Civics` + `Computer Science` + `Physical Education`)
+    FROM joseph_2021
+    UNION ALL
+    SELECT 'Vidya Mandir', `Student Roll`, `Student Name`,
+           (`Hindi` + `English` + `Mathematics` + `Physics` + `Chemistry` + `Biology` +
+            `History` + `Geography` + `Civics` + `Computer Science` + `Physical Education`)
+    FROM vidya_2019
+    UNION ALL
+    SELECT 'Vidya Mandir', `Student Roll`, `Student Name`,
+           (`Hindi` + `English` + `Mathematics` + `Physics` + `Chemistry` + `Biology` +
+            `History` + `Geography` + `Civics` + `Computer Science` + `Physical Education`)
+    FROM vidya_2020
+    UNION ALL
+    SELECT 'Vidya Mandir', `Student Roll`, `Student Name`,
+           (`Hindi` + `English` + `Mathematics` + `Physics` + `Chemistry` + `Biology` +
+            `History` + `Geography` + `Civics` + `Computer Science` + `Physical Education`)
+    FROM vidya_2021
+),
+aggregated_data AS (
+    SELECT school, `Student Roll`, `Student Name`, SUM(total_marks) AS total_marks
+    FROM combined_data
+    GROUP BY school, `Student Roll`, `Student Name`
+),
+ranked_data AS (
+    SELECT school, `Student Roll`, `Student Name`, total_marks,
+           RANK() OVER (PARTITION BY school ORDER BY total_marks DESC) AS rank
+    FROM aggregated_data
+)
+INSERT INTO top_performers
+SELECT school, `Student Roll`, `Student Name`, total_marks, rank
+FROM ranked_data
+WHERE rank = 1;
+------------------------------------------------------------------------------------------------------------------------------------------
+rank_comparision_2020
+
+
+
+CREATE TABLE rank_comparison_2020 AS
+WITH RankedStudents AS (
+    SELECT 
+        "Student Roll",
+        "Student Name",
+        'birla' AS School,
+        (Hindi + English + Mathematics + Physics + Chemistry + Biology + History + Geography + Civics + 
+         "Computer Science" + "Physical Education") AS Total_Marks,
+        RANK() OVER (PARTITION BY 'birla' ORDER BY 
+                     (Hindi + English + Mathematics + Physics + Chemistry + Biology + History + Geography + Civics + 
+                      "Computer Science" + "Physical Education") DESC) AS Rank
+    FROM birla_2020
+    UNION ALL
+    SELECT 
+        "Student Roll",
+        "Student Name",
+        'dps' AS School,
+        (Hindi + English + Mathematics + Physics + Chemistry + Biology + History + Geography + Civics + 
+         "Computer Science" + "Physical Education") AS Total_Marks,
+        RANK() OVER (PARTITION BY 'dps' ORDER BY 
+                     (Hindi + English + Mathematics + Physics + Chemistry + Biology + History + Geography + Civics + 
+                      "Computer Science" + "Physical Education") DESC) AS Rank
+    FROM dps_2020
+    UNION ALL
+    SELECT 
+        "Student Roll",
+        "Student Name",
+        'international' AS School,
+        (Hindi + English + Mathematics + Physics + Chemistry + Biology + History + Geography + Civics + 
+         "Computer Science" + "Physical Education") AS Total_Marks,
+        RANK() OVER (PARTITION BY 'international' ORDER BY 
+                     (Hindi + English + Mathematics + Physics + Chemistry + Biology + History + Geography + Civics + 
+                      "Computer Science" + "Physical Education") DESC) AS Rank
+    FROM international_2020
+    UNION ALL
+    SELECT 
+        "Student Roll",
+        "Student Name",
+        'joseph' AS School,
+        (Hindi + English + Mathematics + Physics + Chemistry + Biology + History + Geography + Civics + 
+         "Computer Science" + "Physical Education") AS Total_Marks,
+        RANK() OVER (PARTITION BY 'joseph' ORDER BY 
+                     (Hindi + English + Mathematics + Physics + Chemistry + Biology + History + Geography + Civics + 
+                      "Computer Science" + "Physical Education") DESC) AS Rank
+    FROM joseph_2020
+    UNION ALL
+    SELECT 
+        "Student Roll",
+        "Student Name",
+        'vidya' AS School,
+        (Hindi + English + Mathematics + Physics + Chemistry + Biology + History + Geography + Civics + 
+         "Computer Science" + "Physical Education") AS Total_Marks,
+        RANK() OVER (PARTITION BY 'vidya' ORDER BY 
+                     (Hindi + English + Mathematics + Physics + Chemistry + Biology + History + Geography + Civics + 
+                      "Computer Science" + "Physical Education") DESC) AS Rank
+    FROM vidya_2020
+)
+SELECT 
+    School, 
+    "Student Roll", 
+    "Student Name", 
+    Total_Marks 
+FROM RankedStudents 
+WHERE Rank = 10
+ORDER BY Total_Marks DESC;
+
+
+------------------------------------------------------------------------------------------------------------------------------------------
+highest_improvement
+
+
+CREATE TABLE highest_improvement AS
+WITH Improvement AS (
+    SELECT 
+        s21."Student Roll",
+        s21."Student Name",
+        'birla' AS School,
+        s21.Hindi - s19.Hindi AS Hindi_Improvement,
+        s21.English - s19.English AS English_Improvement,
+        s21.Mathematics - s19.Mathematics AS Mathematics_Improvement,
+        s21.Physics - s19.Physics AS Physics_Improvement,
+        s21.Chemistry - s19.Chemistry AS Chemistry_Improvement,
+        s21.Biology - s19.Biology AS Biology_Improvement,
+        s21.History - s19.History AS History_Improvement,
+        s21.Geography - s19.Geography AS Geography_Improvement,
+        s21.Civics - s19.Civics AS Civics_Improvement,
+        s21."Computer Science" - s19."Computer Science" AS CS_Improvement,
+        s21."Physical Education" - s19."Physical Education" AS PE_Improvement
+    FROM birla_2019 s19
+    JOIN birla_2021 s21 ON s19."Student Roll" = s21."Student Roll"
+
+    UNION ALL
+    SELECT 
+        s21."Student Roll",
+        s21."Student Name",
+        'dps',
+        s21.Hindi - s19.Hindi, s21.English - s19.English, s21.Mathematics - s19.Mathematics, 
+        s21.Physics - s19.Physics, s21.Chemistry - s19.Chemistry, s21.Biology - s19.Biology, 
+        s21.History - s19.History, s21.Geography - s19.Geography, s21.Civics - s19.Civics, 
+        s21."Computer Science" - s19."Computer Science", s21."Physical Education" - s19."Physical Education"
+    FROM dps_2019 s19
+    JOIN dps_2021 s21 ON s19."Student Roll" = s21."Student Roll"
+
+    UNION ALL
+    SELECT 
+        s21."Student Roll",
+        s21."Student Name",
+        'international',
+        s21.Hindi - s19.Hindi, s21.English - s19.English, s21.Mathematics - s19.Mathematics, 
+        s21.Physics - s19.Physics, s21.Chemistry - s19.Chemistry, s21.Biology - s19.Biology, 
+        s21.History - s19.History, s21.Geography - s19.Geography, s21.Civics - s19.Civics, 
+        s21."Computer Science" - s19."Computer Science", s21."Physical Education" - s19."Physical Education"
+    FROM international_2019 s19
+    JOIN international_2021 s21 ON s19."Student Roll" = s21."Student Roll"
+
+    UNION ALL
+    SELECT 
+        s21."Student Roll",
+        s21."Student Name",
+        'joseph',
+        s21.Hindi - s19.Hindi, s21.English - s19.English, s21.Mathematics - s19.Mathematics, 
+        s21.Physics - s19.Physics, s21.Chemistry - s19.Chemistry, s21.Biology - s19.Biology, 
+        s21.History - s19.History, s21.Geography - s19.Geography, s21.Civics - s19.Civics, 
+        s21."Computer Science" - s19."Computer Science", s21."Physical Education" - s19."Physical Education"
+    FROM joseph_2019 s19
+    JOIN joseph_2021 s21 ON s19."Student Roll" = s21."Student Roll"
+
+    UNION ALL
+    SELECT 
+        s21."Student Roll",
+        s21."Student Name",
+        'vidya',
+        s21.Hindi - s19.Hindi, s21.English - s19.English, s21.Mathematics - s19.Mathematics, 
+        s21.Physics - s19.Physics, s21.Chemistry - s19.Chemistry, s21.Biology - s19.Biology, 
+        s21.History - s19.History, s21.Geography - s19.Geography, s21.Civics - s19.Civics, 
+        s21."Computer Science" - s19."Computer Science", s21."Physical Education" - s19."Physical Education"
+    FROM vidya_2019 s19
+    JOIN vidya_2021 s21 ON s19."Student Roll" = s21."Student Roll"
+)
+
+
+SELECT * FROM (
+    SELECT "Student Roll", "Student Name", School, 'Hindi' AS Subject, Hindi_Improvement AS Improvement
+    FROM Improvement ORDER BY Hindi_Improvement DESC LIMIT 1
+) 
+UNION ALL
+SELECT * FROM (
+    SELECT "Student Roll", "Student Name", School, 'English', English_Improvement 
+    FROM Improvement ORDER BY English_Improvement DESC LIMIT 1
+) 
+UNION ALL
+SELECT * FROM (
+    SELECT "Student Roll", "Student Name", School, 'Mathematics', Mathematics_Improvement 
+    FROM Improvement ORDER BY Mathematics_Improvement DESC LIMIT 1
+) 
+UNION ALL
+SELECT * FROM (
+    SELECT "Student Roll", "Student Name", School, 'Physics', Physics_Improvement 
+    FROM Improvement ORDER BY Physics_Improvement DESC LIMIT 1
+) 
+UNION ALL
+SELECT * FROM (
+    SELECT "Student Roll", "Student Name", School, 'Chemistry', Chemistry_Improvement 
+    FROM Improvement ORDER BY Chemistry_Improvement DESC LIMIT 1
+) 
+UNION ALL
+SELECT * FROM (
+    SELECT "Student Roll", "Student Name", School, 'Biology', Biology_Improvement 
+    FROM Improvement ORDER BY Biology_Improvement DESC LIMIT 1
+) 
+UNION ALL
+SELECT * FROM (
+    SELECT "Student Roll", "Student Name", School, 'History', History_Improvement 
+    FROM Improvement ORDER BY History_Improvement DESC LIMIT 1
+) 
+UNION ALL
+SELECT * FROM (
+    SELECT "Student Roll", "Student Name", School, 'Geography', Geography_Improvement 
+    FROM Improvement ORDER BY Geography_Improvement DESC LIMIT 1
+) 
+UNION ALL
+SELECT * FROM (
+    SELECT "Student Roll", "Student Name", School, 'Civics', Civics_Improvement 
+    FROM Improvement ORDER BY Civics_Improvement DESC LIMIT 1
+) 
+UNION ALL
+SELECT * FROM (
+    SELECT "Student Roll", "Student Name", School, 'Computer Science', CS_Improvement 
+    FROM Improvement ORDER BY CS_Improvement DESC LIMIT 1
+) 
+UNION ALL
+SELECT * FROM (
+    SELECT "Student Roll", "Student Name", School, 'Physical Education', PE_Improvement 
+    FROM Improvement ORDER BY PE_Improvement DESC LIMIT 1
+);
+------------------------------------------------------------------------------------------------------------------------------------------
+
+best_schools_streamwise
+
+Create the result table
+CREATE TABLE best_schools_streamwise AS
+WITH Combined AS (
+    Union all years for each school
+    SELECT 'birla' AS School, "Student Roll", "Student Name", 
+           Hindi, English, Mathematics, Physics, Chemistry, Biology, 
+           History, Geography, Civics, "Computer Science", "Physical Education"
+    FROM birla_2019 
+    UNION ALL
+    SELECT 'birla', * FROM birla_2020 
+    UNION ALL
+    SELECT 'birla', * FROM birla_2021 
+
+    UNION ALL
+    SELECT 'dps', * FROM dps_2019 
+    UNION ALL
+    SELECT 'dps', * FROM dps_2020 
+    UNION ALL
+    SELECT 'dps', * FROM dps_2021 
+
+    UNION ALL
+    SELECT 'international', * FROM international_2019 
+    UNION ALL
+    SELECT 'international', * FROM international_2020 
+    UNION ALL
+    SELECT 'international', * FROM international_2021 
+
+    UNION ALL
+    SELECT 'joseph', * FROM joseph_2019 
+    UNION ALL
+    SELECT 'joseph', * FROM joseph_2020 
+    UNION ALL
+    SELECT 'joseph', * FROM joseph_2021 
+
+    UNION ALL
+    SELECT 'vidya', * FROM vidya_2019 
+    UNION ALL
+    SELECT 'vidya', * FROM vidya_2020 
+    UNION ALL
+    SELECT 'vidya', * FROM vidya_2021 
+),
+
+Streamwise_Marks AS (
+    SELECT 
+        School,
+        Calculate total marks per stream
+        AVG(Hindi + English + History + Geography + Civics) AS Arts_Avg,
+        AVG(Mathematics + Physics + Chemistry + Biology + "Computer Science") AS Science_Avg,
+        AVG(Hindi + English + Mathematics + "Computer Science" + "Physical Education") AS Commerce_Avg
+    FROM Combined
+    GROUP BY School
+)
+
+Get the best school for each stream
+SELECT * FROM (
+    SELECT School, 'Arts' AS Stream, Arts_Avg AS Avg_Marks FROM Streamwise_Marks 
+    ORDER BY Arts_Avg DESC LIMIT 1
+) 
+UNION ALL
+SELECT * FROM (
+    SELECT School, 'Science', Science_Avg FROM Streamwise_Marks 
+    ORDER BY Science_Avg DESC LIMIT 1
+) 
+UNION ALL
+SELECT * FROM (
+    SELECT School, 'Commerce', Commerce_Avg FROM Streamwise_Marks 
+    ORDER BY Commerce_Avg DESC LIMIT 1
+);
+------------------------------------------------------------------------------------------------------------------------------------------
+student_category_counts
+
+
+Create the result table
+CREATE TABLE student_category_counts AS
+WITH Combined AS (
+    Union all years for each school
+    SELECT 'birla' AS School, "Student Roll", "Student Name", 
+           Hindi, English, Mathematics, Physics, Chemistry, Biology, 
+           History, Geography, Civics, "Computer Science", "Physical Education"
+    FROM birla_2019 
+    UNION ALL
+    SELECT 'birla', * FROM birla_2020 
+    UNION ALL
+    SELECT 'birla', * FROM birla_2021 
+
+    UNION ALL
+    SELECT 'dps', * FROM dps_2019 
+    UNION ALL
+    SELECT 'dps', * FROM dps_2020 
+    UNION ALL
+    SELECT 'dps', * FROM dps_2021 
+
+    UNION ALL
+    SELECT 'international', * FROM international_2019 
+    UNION ALL
+    SELECT 'international', * FROM international_2020 
+    UNION ALL
+    SELECT 'international', * FROM international_2021 
+
+    UNION ALL
+    SELECT 'joseph', * FROM joseph_2019 
+    UNION ALL
+    SELECT 'joseph', * FROM joseph_2020 
+    UNION ALL
+    SELECT 'joseph', * FROM joseph_2021 
+
+    UNION ALL
+    SELECT 'vidya', * FROM vidya_2019 
+    UNION ALL
+    SELECT 'vidya', * FROM vidya_2020 
+    UNION ALL
+    SELECT 'vidya', * FROM vidya_2021 
+),
+
+Avg_Marks AS (
+    SELECT School, "Student Roll", "Student Name", 
+           AVG(Hindi + English + Mathematics + Physics + Chemistry + Biology + History + Geography + Civics + "Computer Science" + "Physical Education") / 12 AS Avg_Marks
+    FROM Combined
+    GROUP BY School, "Student Roll", "Student Name"
+),
+
+Categorized AS (
+    SELECT School, "Student Roll", "Student Name", Avg_Marks,
+           CASE
+               WHEN Avg_Marks <= 20 THEN 'Very Poor'
+               WHEN Avg_Marks > 20 AND Avg_Marks <= 40 THEN 'Poor'
+               WHEN Avg_Marks > 40 AND Avg_Marks <= 60 THEN 'Average'
+               WHEN Avg_Marks > 60 AND Avg_Marks <= 80 THEN 'Good'
+               WHEN Avg_Marks > 80 AND Avg_Marks <= 100 THEN 'Very Good'
+               ELSE 'Unknown'
+           END AS Category
+    FROM Avg_Marks
+)
+
+Count the number of students in each category for each school
+SELECT School, Category, COUNT("Student Roll") AS Student_Count
+FROM Categorized
+GROUP BY School, Category
+ORDER BY School, Category;
+SELECT * FROM student_category_counts;
+------------------------------------------------------------------------------------------------------------------------------------------
+best_school_per_year
+
+Create the result table
+CREATE TABLE best_school_per_year AS
+WITH Combined AS (
+    Union all years for each school and explicitly add the Year column
+    SELECT 'birla' AS School, "Student Roll", "Student Name", 
+           Hindi, English, Mathematics, Physics, Chemistry, Biology, 
+           History, Geography, Civics, "Computer Science", "Physical Education", 2019 AS Year
+    FROM birla_2019 
+    UNION ALL
+    SELECT 'birla', "Student Roll", "Student Name", 
+           Hindi, English, Mathematics, Physics, Chemistry, Biology, 
+           History, Geography, Civics, "Computer Science", "Physical Education", 2020
+    FROM birla_2020 
+    UNION ALL
+    SELECT 'birla', "Student Roll", "Student Name", 
+           Hindi, English, Mathematics, Physics, Chemistry, Biology, 
+           History, Geography, Civics, "Computer Science", "Physical Education", 2021
+    FROM birla_2021 
+
+    UNION ALL
+    SELECT 'dps', "Student Roll", "Student Name", 
+           Hindi, English, Mathematics, Physics, Chemistry, Biology, 
+           History, Geography, Civics, "Computer Science", "Physical Education", 2019
+    FROM dps_2019 
+    UNION ALL
+    SELECT 'dps', "Student Roll", "Student Name", 
+           Hindi, English, Mathematics, Physics, Chemistry, Biology, 
+           History, Geography, Civics, "Computer Science", "Physical Education", 2020
+    FROM dps_2020 
+    UNION ALL
+    SELECT 'dps', "Student Roll", "Student Name", 
+           Hindi, English, Mathematics, Physics, Chemistry, Biology, 
+           History, Geography, Civics, "Computer Science", "Physical Education", 2021
+    FROM dps_2021 
+
+    UNION ALL
+    SELECT 'international', "Student Roll", "Student Name", 
+           Hindi, English, Mathematics, Physics, Chemistry, Biology, 
+           History, Geography, Civics, "Computer Science", "Physical Education", 2019
+    FROM international_2019 
+    UNION ALL
+    SELECT 'international', "Student Roll", "Student Name", 
+           Hindi, English, Mathematics, Physics, Chemistry, Biology, 
+           History, Geography, Civics, "Computer Science", "Physical Education", 2020
+    FROM international_2020 
+    UNION ALL
+    SELECT 'international', "Student Roll", "Student Name", 
+           Hindi, English, Mathematics, Physics, Chemistry, Biology, 
+           History, Geography, Civics, "Computer Science", "Physical Education", 2021
+    FROM international_2021 
+
+    UNION ALL
+    SELECT 'joseph', "Student Roll", "Student Name", 
+           Hindi, English, Mathematics, Physics, Chemistry, Biology, 
+           History, Geography, Civics, "Computer Science", "Physical Education", 2019
+    FROM joseph_2019 
+    UNION ALL
+    SELECT 'joseph', "Student Roll", "Student Name", 
+           Hindi, English, Mathematics, Physics, Chemistry, Biology, 
+           History, Geography, Civics, "Computer Science", "Physical Education", 2020
+    FROM joseph_2020 
+    UNION ALL
+    SELECT 'joseph', "Student Roll", "Student Name", 
+           Hindi, English, Mathematics, Physics, Chemistry, Biology, 
+           History, Geography, Civics, "Computer Science", "Physical Education", 2021
+    FROM joseph_2021 
+
+    UNION ALL
+    SELECT 'vidya', "Student Roll", "Student Name", 
+           Hindi, English, Mathematics, Physics, Chemistry, Biology, 
+           History, Geography, Civics, "Computer Science", "Physical Education", 2019
+    FROM vidya_2019 
+    UNION ALL
+    SELECT 'vidya', "Student Roll", "Student Name", 
+           Hindi, English, Mathematics, Physics, Chemistry, Biology, 
+           History, Geography, Civics, "Computer Science", "Physical Education", 2020
+    FROM vidya_2020 
+    UNION ALL
+    SELECT 'vidya', "Student Roll", "Student Name", 
+           Hindi, English, Mathematics, Physics, Chemistry, Biology, 
+           History, Geography, Civics, "Computer Science", "Physical Education", 2021
+    FROM vidya_2021 
+),
+
+Avg_Marks AS (
+    SELECT School, "Student Roll", "Student Name", Year,
+           AVG(Hindi + English + Mathematics + Physics + Chemistry + Biology + History + Geography + Civics + "Computer Science" + "Physical Education") / 12 AS Avg_Marks
+    FROM Combined
+    GROUP BY School, "Student Roll", "Student Name", Year
+),
+
+Categorized AS (
+    SELECT School, "Student Roll", "Student Name", Year, Avg_Marks,
+           CASE
+               WHEN Avg_Marks <= 20 THEN 'Very Poor'
+               WHEN Avg_Marks > 20 AND Avg_Marks <= 40 THEN 'Poor'
+               WHEN Avg_Marks > 40 AND Avg_Marks <= 60 THEN 'Average'
+               WHEN Avg_Marks > 60 AND Avg_Marks <= 80 THEN 'Good'
+               WHEN Avg_Marks > 80 AND Avg_Marks <= 100 THEN 'Very Good'
+               ELSE 'Unknown'
+           END AS Category
+    FROM Avg_Marks
+),
+
+Good_VeryGood AS (
+    Filter out only students in the Good and Very Good categories
+    SELECT School, Year, Category,
+           COUNT("Student Roll") AS Student_Count
+    FROM Categorized
+    WHERE Category IN ('Good', 'Very Good')
+    GROUP BY School, Year, Category
+),
+
+School_Year_Comparison AS (
+    Compare and sum up Good and Very Good students for each school per year
+    SELECT School, Year,
+           SUM(Student_Count) AS Total_Good_VeryGood
+    FROM Good_VeryGood
+    GROUP BY School, Year
+)
+
+Find the school with the highest total Good and Very Good students for each year
+SELECT Year, School, MAX(Total_Good_VeryGood) AS Best_School_Student_Count
+FROM School_Year_Comparison
+GROUP BY Year
+ORDER BY Year;
+SELECT * FROM best_school_per_year;
+
+------------------------------------------------------------------------------------------------------------------------------------------
+fastest_growing_school
+
+Create the result table
+CREATE TABLE fastest_growing_school AS
+WITH Combined AS (
+    Union all years for each school with the correct year column
+    SELECT 'birla' AS School, 2019 AS Year, "Student Roll", "Student Name", 
+           Hindi, English, Mathematics, Physics, Chemistry, Biology, 
+           History, Geography, Civics, "Computer Science", "Physical Education"
+    FROM birla_2019 
+    UNION ALL
+    SELECT 'birla', 2020, * FROM birla_2020 
+    UNION ALL
+    SELECT 'birla', 2021, * FROM birla_2021 
+
+    UNION ALL
+    SELECT 'dps', 2019, * FROM dps_2019 
+    UNION ALL
+    SELECT 'dps', 2020, * FROM dps_2020 
+    UNION ALL
+    SELECT 'dps', 2021, * FROM dps_2021 
+
+    UNION ALL
+    SELECT 'international', 2019, * FROM international_2019 
+    UNION ALL
+    SELECT 'international', 2020, * FROM international_2020 
+    UNION ALL
+    SELECT 'international', 2021, * FROM international_2021 
+
+    UNION ALL
+    SELECT 'joseph', 2019, * FROM joseph_2019 
+    UNION ALL
+    SELECT 'joseph', 2020, * FROM joseph_2020 
+    UNION ALL
+    SELECT 'joseph', 2021, * FROM joseph_2021 
+
+    UNION ALL
+    SELECT 'vidya', 2019, * FROM vidya_2019 
+    UNION ALL
+    SELECT 'vidya', 2020, * FROM vidya_2020 
+    UNION ALL
+    SELECT 'vidya', 2021, * FROM vidya_2021 
+),
+
+Stream_Avg AS (
+    Calculate average marks for each stream and overall per school per year
+    SELECT 
+        School, 
+        Year,
+        AVG(Hindi + English + History + Geography + Civics) AS Arts_Avg,
+        AVG(Mathematics + Physics + Chemistry + Biology + "Computer Science") AS Science_Avg,
+        AVG(Hindi + English + Mathematics + "Computer Science" + "Physical Education") AS Commerce_Avg,
+        AVG(Hindi + English + Mathematics + Physics + Chemistry + Biology + 
+            History + Geography + Civics + "Computer Science" + "Physical Education") AS Overall_Avg
+    FROM Combined
+    GROUP BY School, Year
+),
+
+Growth AS (
+    Calculate percentage growth for each stream and overall
+    SELECT 
+        s1.School,
+        ((s3.Overall_Avg - s1.Overall_Avg) / s1.Overall_Avg) * 100 AS Overall_Growth,
+        ((s3.Arts_Avg - s1.Arts_Avg) / s1.Arts_Avg) * 100 AS Arts_Growth,
+        ((s3.Science_Avg - s1.Science_Avg) / s1.Science_Avg) * 100 AS Science_Growth,
+        ((s3.Commerce_Avg - s1.Commerce_Avg) / s1.Commerce_Avg) * 100 AS Commerce_Growth
+    FROM Stream_Avg s1
+    JOIN Stream_Avg s3 ON s1.School = s3.School
+    WHERE s1.Year = 2019 AND s3.Year = 2021
+)
+
+Select the fastest-growing school for each category
+SELECT 
+    (SELECT School FROM Growth ORDER BY Overall_Growth DESC LIMIT 1) AS Fastest_Growing_Overall,
+    (SELECT School FROM Growth ORDER BY Arts_Growth DESC LIMIT 1) AS Fastest_Growing_Arts,
+    (SELECT School FROM Growth ORDER BY Science_Growth DESC LIMIT 1) AS Fastest_Growing_Science,
+    (SELECT School FROM Growth ORDER BY Commerce_Growth DESC LIMIT 1) AS Fastest_Growing_Commerce
+FROM Growth
+LIMIT 1;
+SELECT * FROM fastest_growing_school;
